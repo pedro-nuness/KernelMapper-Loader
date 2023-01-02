@@ -15,3 +15,12 @@ Alyx Driver/.vs/Alyx Driver/v17/.suo
 *.cat
 *.recipe
 *.inl
+*.db-shm
+*.db-wal
+*.opendb
+ImGuiExternal/x64/Release/ImGuiExternal.vcxproj.FileListAbsolute.txt
+MapperLoader/Starter/x64/Release/Starter.vcxproj.FileListAbsolute.txt
+*.iobj
+*.ipdb
+*.iobj
+UserMode Communication/x64/Release/UserMode Communication.iobj
