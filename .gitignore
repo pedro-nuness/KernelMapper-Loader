@@ -1,0 +1,17 @@
+
+*.vsidx
+*.lock
+.vs/LoaderMapper/v17/.suo
+*.db
+*.bin
+*.ipch
+Alyx Driver/.vs/Alyx Driver/v17/.suo
+*.log
+*.tlog
+*.obj
+*.tmh
+*.inf
+*.pdb
+*.cat
+*.recipe
+*.inl
