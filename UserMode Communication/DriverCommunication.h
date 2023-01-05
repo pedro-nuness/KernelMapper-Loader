@@ -1,4 +1,5 @@
 #pragma once
+//#include "Kernel-User.h"
 #include <cstdint>
 #include <memory>
 #include <string_view>
@@ -8,31 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-
-enum FUNCTIONS
-{
-	WRITE = 1,
-	READ = 2,
-	GETPID = 3,
-	GETMODULEBASE = 4,
-	GETPROCESSPEB = 5
-};
-
-typedef struct _MEMORYCOMMUNICATION
-{
-	int kFunction;
-	void* kBuffer;
-	bool kSucess;
-
-	ULONG64		kAddress;
-	ULONG		kSize;
-	HANDLE		kPid;
-
-	const char* kModuleName;
-	const char* KProcessName;
-
-}MEMORYCOMMUNICATION;
-
+#include "..\Kernel-User.h"
 
 class DriverCommunication
 {
@@ -48,92 +25,6 @@ class DriverCommunication
 	}
 
 	template <typename type>
-	void WriteMemory(ULONG64 uAdress, type uBuffer, HANDLE uPid)
-	{
-		ULONG uSize = sizeof(uBuffer);
-
-		MEMORYCOMMUNICATION m{};
-		m.kFunction = WRITE;
-		m.kPid = uPid;
-		m.kAddress = uAdress;
-		m.kBuffer = &uBuffer;
-		m.kSize = uSize;
-		m.kModuleName = NULL;
-		m.KProcessName = NULL;
-		m.kSucess = false;
-
-		CallHook(&m);
-
-		return m.kSucess;
-	}
-
-	template <typename type>
-	type ReadMemory(ULONG64 uAddress, HANDLE uPid)
-	{
-		type uBuffer{};
-
-		MEMORYCOMMUNICATION m{};
-		m.kFunction = READ;
-		m.kPid = uPid;
-		m.kAddress = uAddress;
-		m.kBuffer = &uBuffer;
-		m.kSize = sizeof(type);
-		m.kModuleName = NULL;
-		m.KProcessName = NULL;
-
-		CallHook(&m);
-		return uBuffer;
-	}
-
-	uintptr_t GetModuleBaseAdress(const char* uModuleName, HANDLE uPid)
-	{
-		MEMORYCOMMUNICATION m{};
-		m.kFunction = GETMODULEBASE;
-		m.kPid = uPid;
-		m.kAddress = NULL;
-		m.kBuffer = NULL;
-		m.kSize = NULL;
-		m.kModuleName = uModuleName;
-		m.KProcessName = NULL;
-
-		CallHook(&m);
-
-		return (uintptr_t)m.kBuffer;
-	}
-
-	uintptr_t GetProcessPeb(HANDLE uPid)
-	{
-		MEMORYCOMMUNICATION m{};
-		m.kFunction = GETPROCESSPEB;
-		m.kPid = uPid;
-		m.kAddress = NULL;
-		m.kBuffer = NULL;
-		m.kSize = NULL;
-		m.kModuleName = NULL;
-		m.KProcessName = NULL;
-
-		CallHook(&m);
-
-		return (uintptr_t)m.kBuffer;
-	}
-
-	HANDLE GetProcessPID(const char* uProcessName)
-	{
-		MEMORYCOMMUNICATION m{};
-		m.kFunction = GETPID;
-		m.kPid = NULL;
-		m.kAddress = NULL;
-		m.kBuffer = NULL;
-		m.kSize = NULL;
-		m.kModuleName = NULL;
-		m.KProcessName = uProcessName;
-
-		CallHook(&m);
-
-		return m.kPid;
-	}
-
-	template <typename type>
 	bool FAIL(type t1, std::string message, bool inv = false)
 	{
 		if (inv && t1)
@@ -144,13 +35,11 @@ class DriverCommunication
 		else if (!t1)
 		{
 			std::cout << message;
-				return false;
+			return false;
 		}
 
 		return true;
 	}
-
-
 
 	HANDLE dPid = NULL;
 	bool uSetupped = false;
@@ -175,72 +64,137 @@ public:
 		this->uSetupped = true;
 	}
 
+	template <typename type>
+	AnswareManager WriteMemory(ULONG64 uAdress, type uBuffer, HANDLE uPid)
+	{
+		AnswareManager DefaultAnswer = AnswareManager(true);
+
+		ULONG uSize = sizeof(uBuffer);
+
+		_COPY_MEMORY m{  };
+		m.kFunction = WRITE;
+		m.kPid = uPid;
+		m.kAddress = uAdress;
+		m.kBuffer = &uBuffer;
+		m.kSize = uSize;
+		m.kModuleName = NULL;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
+
+		CallHook(&m);
+
+		return DefaultAnswer;
+	}
 
 	template <typename type>
-	bool Write(ULONG64 uAdress, type uBuffer, HANDLE uPid = 0)
+	type ReadMemory(ULONG64 uAddress, HANDLE uPid, AnswareManager* answer = nullptr)
 	{
+		type uBuffer{};
 
-		if (FAIL(uAdress, "Invalid Adress while writing!\n"))
-			return false;
-		if (FAIL(uBuffer, "Invalid Buffer while writing!\n"))
-			return false;
+		AnswareManager DefaultAnswer = AnswareManager(true);
 
-		uPid = this->GetPid(uPid);
-		if (FAIL(uPid, "Invalid PID while reading!"))
-			return false;
+		_COPY_MEMORY m{ };
+		m.kFunction = READ;
+		m.kPid = uPid;
+		m.kAddress = uAddress;
+		m.kBuffer = &uBuffer;
+		m.kSize = sizeof(type);
+		m.kModuleName = NULL;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
 
-		Communicate(WRITE, uBuffer, uAdress, sizeof(uBuffer), uPid, NULL, NULL);
+		CallHook(&m);
 
-		return true;
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return uBuffer;
 	}
 
-
-	template <typename type>
-	type Read(ULONG64 uAdress, HANDLE uPid = 0)
+	void* GetModuleBaseAdress(const char* uModuleName, HANDLE uPid, AnswareManager* answer = nullptr)
 	{
-		if (FAIL(uAdress, "Invalid Adress while reading!\n"))
-			return false;
+		AnswareManager DefaultAnswer = AnswareManager(true);
 
-		uPid = this->GetPid(uPid);
-		if (FAIL(uPid, "Invalid PID while reading!"))
-			return false;
+		_COPY_MEMORY m{ };
+		m.kFunction = GETMODULEBASE;
+		m.kPid = uPid;
+		m.kAddress = NULL;
+		m.kBuffer = NULL;
+		m.kSize = NULL;
+		m.kModuleName = uModuleName;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
 
-		type uBuffer;
+		CallHook(&m);
 
-		return ReadMemory(uAdress, uPid);
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return m.kBuffer;
 	}
 
-	MEMORYCOMMUNICATION m{};
-
-	uintptr_t GetModuleBase(const char* uModuleName, HANDLE uPid = 0)
+	uintptr_t GetProcessPeb(HANDLE uPid, AnswareManager* answer = nullptr)
 	{
-		if (FAIL(uModuleName, "Invalid ModuleName while getting base!\n"))
-			return NULL;
+		AnswareManager DefaultAnswer = AnswareManager(true);
 
-		uPid = this->GetPid(uPid);
-		if (FAIL(uPid, "Invalid PID while reading!\n"))
-			return NULL;
+		_COPY_MEMORY m{};
+		m.kFunction = GETPROCESSPEB;
+		m.kPid = uPid;
+		m.kAddress = NULL;
+		m.kBuffer = NULL;
+		m.kSize = NULL;
+		m.kModuleName = NULL;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
 
-		return GetModuleBaseAdress(uModuleName, uPid);
+		CallHook(&m);
+
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return (uintptr_t)m.kBuffer;
 	}
 
-	HANDLE GetPID(const char* uProcessName)
+	HANDLE GetProcessPID(const char* uProcessName, AnswareManager* answer = nullptr)
 	{
-		if (FAIL(uProcessName, "Invalid process name while getting pid!\n"))
-			return NULL;
+		AnswareManager DefaultAnswer = AnswareManager(true);
 
-		return GetProcessPID(uProcessName);
+		_COPY_MEMORY m{  };
+		m.kFunction = GETPID;
+		m.kPid = NULL;
+		m.kAddress = NULL;
+		m.kBuffer = NULL;
+		m.kSize = NULL;
+		m.kModuleName = NULL;
+		m.KProcessName = uProcessName;
+		m.kAnswer = &DefaultAnswer;
+
+		CallHook(&m);
+
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return m.kPid;
 	}
 
-	uintptr_t GetPEB(HANDLE uPid)
+	AnswareManager CheckDriver()
 	{
-		uPid = this->GetPid(uPid);
-		if (FAIL(uPid, "Invalid PID while getting peb!\n"))
-			return NULL;
+		AnswareManager DefaultAnswer = AnswareManager(true);
 
-		return GetProcessPeb(uPid);
+		_COPY_MEMORY m{};
+		m.kFunction = COMMUNICATION;
+		m.kPid = NULL;
+		m.kAddress = NULL;
+		m.kBuffer = nullptr;
+		m.kSize = NULL;
+		m.kModuleName = NULL;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
+
+		CallHook(&m);
+
+		return DefaultAnswer;
 	}
-
 
 };
 

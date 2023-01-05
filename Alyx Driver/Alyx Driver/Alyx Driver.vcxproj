@@ -22,6 +22,13 @@
     <ClInclude Include="Utils\cleaner.h" />
     <ClInclude Include="Utils\imports.h" />
     <ClInclude Include="Utils\memory.h" />
+    <ClInclude Include="Utils\Natives\NativeEnums.h" />
+    <ClInclude Include="Utils\Natives\NativeStructs.h" />
+    <ClInclude Include="Utils\Natives\NativeStructs10.h" />
+    <ClInclude Include="Utils\Natives\NativeStructs7.h" />
+    <ClInclude Include="Utils\Natives\NativeStructs8.h" />
+    <ClInclude Include="Utils\Natives\NativeStructs81.h" />
+    <ClInclude Include="Utils\Natives\PEStructs.h" />
   </ItemGroup>
   <ItemGroup>
     <Inf Include="AlyxDriver.inf" />
@@ -34,6 +41,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">x64</Platform>
     <RootNamespace>Alyx_Driver</RootNamespace>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -108,6 +116,7 @@
       <WppKernelMode>true</WppKernelMode>
       <TreatWarningAsError>false</TreatWarningAsError>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
@@ -143,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utils\utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,6 +13,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Alyx Driver", "Alyx Driver\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UserMode Communication", "UserMode Communication\UserMode Communication.vcxproj", "{02C8E793-0BFC-44DD-8840-D20A404324F8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{6247CFC1-5B78-483A-9886-09A4993AF19E}"
+	ProjectSection(SolutionItems) = preProject
+		Kernel-User.h = Kernel-User.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
