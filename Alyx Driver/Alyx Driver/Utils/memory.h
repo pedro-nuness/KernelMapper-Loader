@@ -178,6 +178,10 @@ namespace memory {
 		return true;
 	}
 
+
+
+
+
 	bool ReadMemory(HANDLE pid, PVOID address, PVOID buffer, SIZE_T size) {
 		if (!address || !buffer || !size)
 			return false;
@@ -212,8 +216,101 @@ namespace memory {
 			i++;
 	}
 
+	ULONG64 BBGetUserModuleADR(IN PEPROCESS pProcess, IN PUNICODE_STRING ModuleName)
+	{
+		//ASSERT(pProcess != NULL);
+		if (pProcess == NULL)
+			return NULL;
 
-	PVOID BBGetUserModule(IN PEPROCESS pProcess, IN PUNICODE_STRING ModuleName)
+		//Protect from UserMode AV
+		__try
+		{
+			LARGE_INTEGER time = { 0 };
+			time.QuadPart = -250ll * 10 * 1000;     // 250 msec.
+
+			BOOLEAN isWow64 = (PsGetProcessWow64Process(pProcess) != NULL) ? TRUE : FALSE;
+
+			// Wow64 process
+			if (isWow64)
+			{
+				PPEB32 pPeb32 = (PPEB32)PsGetProcessWow64Process(pProcess);
+				if (pPeb32 == NULL)
+				{
+					return NULL;
+				}
+
+				// Wait for loader a bit
+				for (INT i = 0; !pPeb32->Ldr && i < 10; i++)
+				{
+					//DPRINT("BlackBone: %s: Loader not intialiezd, waiting\n", __FUNCTION__);
+					KeDelayExecutionThread(KernelMode, TRUE, &time);
+				}
+
+				// Still no loader
+				if (!pPeb32->Ldr)
+				{
+					return NULL;
+				}
+
+				// Search in InLoadOrderModuleList
+				for (PLIST_ENTRY32 pListEntry = (PLIST_ENTRY32)((PPEB_LDR_DATA32)pPeb32->Ldr)->InLoadOrderModuleList.Flink;
+					pListEntry != &((PPEB_LDR_DATA32)pPeb32->Ldr)->InLoadOrderModuleList;
+					pListEntry = (PLIST_ENTRY32)pListEntry->Flink)
+				{
+					UNICODE_STRING ustr;
+					PLDR_DATA_TABLE_ENTRY32 pEntry = CONTAINING_RECORD(pListEntry, LDR_DATA_TABLE_ENTRY32, InLoadOrderLinks);
+
+					RtlUnicodeStringInit(&ustr, (PWCH)pEntry->BaseDllName.Buffer);
+
+					if (RtlCompareUnicodeString(&ustr, ModuleName, TRUE) == 0)
+						return pEntry->DllBase;
+				}
+			}
+			// Native process
+			else
+			{
+				PPEB pPeb = PsGetProcessPeb(pProcess);
+				if (!pPeb)
+				{
+					//DPRINT("BlackBone: %s: No PEB present. Aborting\n", __FUNCTION__);
+					return NULL;
+				}
+
+				// Wait for loader a bit
+				for (INT i = 0; !pPeb->Ldr && i < 10; i++)
+				{
+					//DPRINT("BlackBone: %s: Loader not intialiezd, waiting\n", __FUNCTION__);
+					KeDelayExecutionThread(KernelMode, TRUE, &time);
+				}
+
+				// Still no loader
+				if (!pPeb->Ldr)
+				{
+					//DPRINT("BlackBone: %s: Loader was not intialiezd in time. Aborting\n", __FUNCTION__);
+					return NULL;
+				}
+
+				//Search in InLoadOrderModuleList
+				for (PLIST_ENTRY pListEntry = pPeb->Ldr->InLoadOrderModuleList.Flink;
+					pListEntry != &pPeb->Ldr->InLoadOrderModuleList;
+					pListEntry = pListEntry->Flink)
+				{
+					PLDR_DATA_TABLE_ENTRY pEntry = CONTAINING_RECORD(pListEntry, LDR_DATA_TABLE_ENTRY, InLoadOrderLinks);
+					if (RtlCompareUnicodeString(&pEntry->BaseDllName, ModuleName, TRUE) == 0)
+						return (ULONG64)pEntry->DllBase;
+				}
+			}
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			//DPRINT("BlackBone: %s: Exception, Code: 0x%X\n", __FUNCTION__, GetExceptionCode());
+		}
+
+		return NULL;
+	}
+
+
+	PVOID BBGetUserModulePTR(IN PEPROCESS pProcess, IN PUNICODE_STRING ModuleName)
 	{
 		//ASSERT(pProcess != NULL);
 		if (pProcess == NULL)
@@ -306,7 +403,7 @@ namespace memory {
 		return NULL;
 	}
 
-	void* GetBase(HANDLE PID, const char* Module) {
+	void* GetModulePointer(HANDLE PID, const char* Module) {
 		PEPROCESS process;
 
 		if (NT_SUCCESS(PsLookupProcessByProcessId(PID, &process))) {
@@ -323,13 +420,38 @@ namespace memory {
 
 
 			KeAttachProcess((PKPROCESS)process);
-			void* ptr = memory::BBGetUserModule(process, &Module_name_unicode);		
+			void* ptr = memory::BBGetUserModulePTR(process, &Module_name_unicode);		
 			KeDetachProcess();
 			ObDereferenceObject(process);
 			return ptr;
 		}
 		return nullptr;
 	}
+
+	ULONG GetModuleAdress(HANDLE PID, const char* Module) {
+		PEPROCESS process;
+
+		if (NT_SUCCESS(PsLookupProcessByProcessId(PID, &process))) {
+
+			ANSI_STRING Module_name_ansi = {};
+			UNICODE_STRING Module_name_unicode = {};
+			RtlInitAnsiString(&Module_name_ansi, Module);
+			if (!NT_SUCCESS(RtlAnsiStringToUnicodeString(&Module_name_unicode, &Module_name_ansi, TRUE)))
+			{
+				DbgPrintEx(0, 0, "failed to convert string (get_process_id)");
+				RtlFreeUnicodeString(&Module_name_unicode);
+				return NULL;
+			}
+
+			KeAttachProcess((PKPROCESS)process);
+			ULONG ptr = memory::BBGetUserModuleADR(process, &Module_name_unicode);
+			KeDetachProcess();
+			ObDereferenceObject(process);
+			return ptr;
+		}
+		return NULL;
+	}
+
 
 	NTSTATUS ProtectVirtualMemory(HANDLE pid, PVOID address, ULONG size, ULONG protection, ULONG& protection_out)
 	{
@@ -362,25 +484,5 @@ namespace memory {
 		ObDereferenceObject(target_process);
 		return status;
 	}
-
-
-	void* GetProcessModuleBase(HANDLE PID, const char* modulename)
-	{
-		ANSI_STRING x;
-		UNICODE_STRING game_module;
-		RtlInitAnsiString(&x, modulename);
-		RtlAnsiStringToUnicodeString(&game_module, &x, TRUE);
-
-		PEPROCESS process;
-		if (NT_SUCCESS(PsLookupProcessByProcessId(PID, &process)))
-		{
-			void* base_address = nullptr;
-			RtlFreeUnicodeString(&game_module);
-			return base_address;
-		}
-
-		return nullptr;
-	}
-
 
 }

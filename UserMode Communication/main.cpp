@@ -5,18 +5,18 @@
 #include <thread>
 #include "DriverCommunication.h"
 #include <sstream>
+#include <iomanip>
+#include "game/game.h"
 #pragma warning(disable:4996)
 
 DriverCommunication Kernel;
+
 std::vector<AnswareManager> Calls;
+
 
 bool bPendingLog = false;
 
-namespace Game 
-{
-	uint64_t Base;
 
-}
 
 void CheckCalls() {
 
@@ -45,52 +45,98 @@ void SetupCall(AnswareManager* call)
 	bPendingLog = true;
 }
 
-void WaitForLog(std::string log) {
+template <typename T>
+void Log(std::string log, T info) {
 
 	while (bPendingLog)
 		Sleep(250);
 
-	std::cout << log;
-}
-
-template <typename T>
-void Log(std::string LOG, T info ) {
-	std::stringstream Adresses;
-	std::string LOGS;
-
-	if (info) {
-		Adresses << info;
-		LOGS = LOG + ": " + Adresses.str() + "\n";
-	}
+	if (info)
+		std::cout << log << ": " << info << std::endl;
 	else
-		LOGS = LOG;
-
-	WaitForLog(LOGS);
-	Adresses.clear();
-	LOGS.clear();
-}
-
-uint64_t HexAddition(uint64_t h1, uint64_t h2) {
-	std::stringstream ss;
-
-
-
-
+		std::cout << log << std::endl;
 }
 
 
-uint64_t GetBase(HANDLE PID) {
-	return Kernel.ReadMemory<uint64_t>(Game::Base , PID);
+
+
+
+
+ULONG64 GetDecFromHex(ULONG64 h, int size) {
+	std::stringstream hex_stream;
+	hex_stream << std::dec << h;
+	std::string hex_sum = hex_stream.str();
+
+	return std::stoi(hex_sum, nullptr, size);
 }
 
-uint64_t GetLocalPlayer() { 
-	return Game::Base + 0x18AC00;
+std::string hexaddition(std::string hex1, std::string hex2) {
+	// Read in the two hexadecimal numbers as strings
+
+	if (hex1.empty() || hex2.empty())
+		return "";
+
+	//// Convert the hexadecimal strings to integers
+	int num1 = std::stoi(hex1, nullptr, 16);
+	int num2 = std::stoi(hex2, nullptr, 16);
+
+
+	//std::string str = std::to_string(num)
+	// 
+	// Add the two integers
+	int sum = num1 + num2;
+
+	// Convert the sum back to a hexadecimal string
+	std::stringstream hex_stream;
+	hex_stream << std::hex << sum;
+	std::string hex_sum = hex_stream.str();
+
+	std::stringstream output_stream;
+	output_stream << std::setw(8) << std::setfill('0') << hex_sum;
+	hex_sum = output_stream.str();
+
+	//std::cout <<  hex_sum << std::endl;
+	return hex_sum;
 }
 
-uint64_t GetHealth(HANDLE PID) {
-	return Kernel.ReadMemory<uint64_t>((Game::Base + 0x18AC00) + 0xEC, PID);
+ULONG64 hexadditionL(ULONG64 long1, ULONG64 long2) {
+	// Read in the two hexadecimal numbers as strings
+
+	if (!long1 || !long2)
+		return NULL;
+
+	//// Convert the hexadecimal strings to integers
+	//int num1 = std::stoi(hex1, nullptr, 16);
+	//int num2 = std::stoi(hex2, nullptr, 16);
+
+	//std::string str = std::to_string(num)
+	// 
+	// Add the two integers
+	ULONG64 sum = long1 + long2;
+
+	// Convert the sum back to a hexadecimal string
+	std::stringstream hex_stream;
+	hex_stream << std::hex << sum;
+	std::string hex_sum = hex_stream.str();
+
+	std::stringstream output_stream;
+	output_stream << std::setw(8) << std::setfill('0') << hex_sum;
+	hex_sum = output_stream.str();
+
+	//std::cout <<  hex_sum << std::endl;
+	return std::stoi(hex_sum, nullptr, 16);
 }
 
+
+template<typename t>
+t ToHex(t curlong, int size)
+{
+	std::ostringstream ss;
+	ss << std::hex << curlong;
+	std::string result = ss.str();
+
+	return std::stoull(result, nullptr, size);
+}
 
 int main() {
 
@@ -105,8 +151,6 @@ int main() {
 
 	Calls.push_back(KernelCheck);
 
-	Sleep(2000);
-
 	std::string process;
 
 	Log("Target process: ", NULL);
@@ -120,75 +164,41 @@ int main() {
 		exit(0);
 	}
 
-	AnswareManager GlobalCall = AnswareManager(true);
-	auto PID = Kernel.GetProcessPID(process.c_str(), &GlobalCall);
-	SetupCall(&GlobalCall);
 
+	auto PID = Kernel.GetProcessPID(process.c_str());
 	Log("PID", PID);
+	Kernel.SetupPid(PID); //setupped pid!
+
 
 	std::string wantmodule;
 	Log("Module: ", NULL);
 	std::cin >> wantmodule;
 	Log("\n", NULL);
 
-	void* Module = Kernel.GetModuleBaseAdress(wantmodule.c_str(), PID, &GlobalCall);
-	SetupCall(&GlobalCall);
 
-	Log("Module", Module);
-
-	Sleep(100);
-
-	Game::Base = reinterpret_cast<uint64_t>(Module);
-	if (!Game::Base)
-	{
+	Game::Base = Kernel.GetModuleBaseAdress(wantmodule.c_str());
+	if (!Game::Base) {
 		Sleep(2000);
 		exit(0);
 	}
 
-	//Kernel.ReadMemory<uint64_t>(Game::Base, PID);
-	std::cout << "Game base memory: ";
-	std::cout << "0x" << std::hex << Game::Base;
-	std::cout << "\n";
-	
-	//SetupCall(&GlobalCall);
-	bPendingLog = false;
+	Game::K = &Kernel; //Setup driver object
 
+	Log("Game Base", (PVOID)Game::Base);
+	Log("LocalPlayer", (PVOID)Game::GetLocalPlayer());
+	Log("Health", (PVOID)(Game::GetLocalPlayer() + OFF_HEALTH));
 
-	auto Base = GetBase(PID);
-
-
-	//uint64_t local = Game::Base + 0x18AC00;
-	std::cout << "Local: " << std::hex << Kernel.ReadMemory<uint64_t>(Game::Base, PID);
-	//Log("Base", Base);
-	//std::cout << Health;
-
-
-
-
-	//auto PEB = Kernel.GetProcessPeb(PID, &GlobalCall); // Driver 1
-	//SetupCall(&GlobalCall);
-
-	//std::cout << "PEB ADDR: " << std::hex << PEB << std::dec << std::endl;
-	//system("pause");
-
-	//bool Alive = false;
-
-	//auto OldLife = Kernel.ReadMemory<uint64_t>(0x95DAB88, PID);
+	auto OldHealth = Game::GetHealth();
 
 	while (true)
 	{
-	//	uint64_t ammon = 30;
-	//	uint64_t exhealth = 999;
+		//uint32_t CurHealth = Game::GetHealth();
 
-	//	auto CurrentLife = Kernel.ReadMemory<uint64_t>(0x074132C, PID);
+		
+		Kernel.WriteMemory<int>(Game::GetLocalPlayer() + OFF_HEALTH, 100);
+		
 
-	//	if (CurrentLife - OldLife) {
-	//		Kernel.WriteMemory<uint64_t>(0x95DAB88, exhealth, PID);
-	//	}
-
-	//	auto ammo = Kernel.WriteMemory<uint64_t>(0x0741378, ammon, PID);
-
-	//	Sleep(150);
+		Sleep(500);
 	}
 
 	//std::cout << "PID: " << PID << "\n";

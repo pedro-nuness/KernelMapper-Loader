@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DriverCommunication.h" />
+    <ClInclude Include="game\game.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Utils\Singleton.h" />
     <ClInclude Include="Utils\Utils.h" />

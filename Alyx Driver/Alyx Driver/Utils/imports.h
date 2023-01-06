@@ -70,7 +70,6 @@ ZwTerminateThread(
     IN NTSTATUS ExitStatus
 );
 
-
 extern "C"
 NTKERNELAPI
 NTSTATUS

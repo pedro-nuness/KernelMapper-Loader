@@ -59,15 +59,21 @@ public:
 
 	void SetupPid(HANDLE DefaultPID)
 	{
-		std::cout << "Sucessfully Setupped PID: " << dPid << "\n";
 		this->dPid = DefaultPID;
 		this->uSetupped = true;
+		std::cout << "Sucessfully Setupped PID: " << dPid << "\n";
 	}
 
 	template <typename type>
-	AnswareManager WriteMemory(ULONG64 uAdress, type uBuffer, HANDLE uPid)
+	AnswareManager WriteMemory(ULONG64 uAdress, type uBuffer, HANDLE uPid = 0)
 	{
 		AnswareManager DefaultAnswer = AnswareManager(true);
+
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return DefaultAnswer;
 
 		ULONG uSize = sizeof(uBuffer);
 
@@ -87,8 +93,14 @@ public:
 	}
 
 	template <typename type>
-	type ReadMemory(ULONG64 uAddress, HANDLE uPid, AnswareManager* answer = nullptr)
+	type ReadMemory(ULONG64 uAddress, HANDLE uPid = 0, AnswareManager* answer = nullptr)
 	{
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return NULL;
+
 		type uBuffer{};
 
 		AnswareManager DefaultAnswer = AnswareManager(true);
@@ -111,12 +123,20 @@ public:
 		return uBuffer;
 	}
 
-	void* GetModuleBaseAdress(const char* uModuleName, HANDLE uPid, AnswareManager* answer = nullptr)
+	void* GetModuleBasePointer(const char* uModuleName, HANDLE uPid = 0 , AnswareManager* answer = nullptr)
 	{
 		AnswareManager DefaultAnswer = AnswareManager(true);
+		
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return nullptr;
+
+		this->dPid;
 
 		_COPY_MEMORY m{ };
-		m.kFunction = GETMODULEBASE;
+		m.kFunction = GETMODULEPOINTER;
 		m.kPid = uPid;
 		m.kAddress = NULL;
 		m.kBuffer = NULL;
@@ -133,9 +153,45 @@ public:
 		return m.kBuffer;
 	}
 
-	uintptr_t GetProcessPeb(HANDLE uPid, AnswareManager* answer = nullptr)
+	ULONG64 GetModuleBaseAdress(const char* uModuleName, HANDLE uPid = 0, AnswareManager* answer = nullptr)
+	{
+		
+		AnswareManager DefaultAnswer = AnswareManager(true);
+
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return NULL;
+
+		_COPY_MEMORY m{ };
+		m.kFunction = GETMODULEADRESS;
+		m.kPid = uPid;
+		m.kAddress = NULL;
+		m.kBuffer = NULL;
+		m.kSize = NULL;
+		m.kModuleName = uModuleName;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
+
+		CallHook(&m);
+
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return m.kAddress;
+	}
+
+	uintptr_t GetProcessPeb(HANDLE uPid = 0, AnswareManager* answer = nullptr)
 	{
 		AnswareManager DefaultAnswer = AnswareManager(true);
+
+
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return NULL;
 
 		_COPY_MEMORY m{};
 		m.kFunction = GETPROCESSPEB;
