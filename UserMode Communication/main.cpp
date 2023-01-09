@@ -1,12 +1,8 @@
 
 
+#include "main.h"
+#include <vector>
 
-#include <iostream>
-#include <thread>
-#include "DriverCommunication.h"
-#include <sstream>
-#include <iomanip>
-#include "game/game.h"
 #pragma warning(disable:4996)
 
 DriverCommunication Kernel;
@@ -16,6 +12,8 @@ std::vector<AnswareManager> Calls;
 
 bool bPendingLog = false;
 
+Globals* Global;
+memory* Memory;
 
 
 void CheckCalls() {
@@ -56,10 +54,6 @@ void Log(std::string log, T info) {
 	else
 		std::cout << log << std::endl;
 }
-
-
-
-
 
 
 ULONG64 GetDecFromHex(ULONG64 h, int size) {
@@ -138,6 +132,25 @@ t ToHex(t curlong, int size)
 	return std::stoull(result, nullptr, size);
 }
 
+void WaitModule(ULONG64& mem, std::string modulename) {
+
+	mem = Kernel.GetModuleBaseAdress(modulename.c_str());
+
+	std::string LOG = "[!] Waiting for " + modulename;
+
+	Log(LOG, NULL);
+	while (!mem)
+	{
+		mem = Kernel.GetModuleBaseAdress(modulename.c_str());
+		Sleep(500);
+	}
+
+	std::string found = "[+] Found " + modulename + " at";
+	Log(found, PVOID(mem));
+	Log("\n", NULL);
+
+}
+
 int main() {
 
 	auto KernelCheck = Kernel.CheckDriver();
@@ -151,55 +164,48 @@ int main() {
 
 	Calls.push_back(KernelCheck);
 
-	std::string process;
+	Sleep(1000);
 
-	Log("Target process: ", NULL);
-	std::cin >> process;
-	Log("\n", NULL);
+	Log("\nWaiting for csgo.exe!\n", NULL);
 
-	if (process.empty())
+	Global->PID = Kernel.GetProcessPID("csgo.exe");
+	while (!Global->PID)
 	{
-		Log("Invalid Process!\n", NULL);
-		Sleep(2000);
-		exit(0);
-	}
-
-
-	auto PID = Kernel.GetProcessPID(process.c_str());
-	Log("PID", PID);
-	Kernel.SetupPid(PID); //setupped pid!
-
-
-	std::string wantmodule;
-	Log("Module: ", NULL);
-	std::cin >> wantmodule;
-	Log("\n", NULL);
-
-
-	Game::Base = Kernel.GetModuleBaseAdress(wantmodule.c_str());
-	if (!Game::Base) {
-		Sleep(2000);
-		exit(0);
-	}
-
-	Game::K = &Kernel; //Setup driver object
-
-	Log("Game Base", (PVOID)Game::Base);
-	Log("LocalPlayer", (PVOID)Game::GetLocalPlayer());
-	Log("Health", (PVOID)(Game::GetLocalPlayer() + OFF_HEALTH));
-
-	auto OldHealth = Game::GetHealth();
-
-	while (true)
-	{
-		//uint32_t CurHealth = Game::GetHealth();
-
-		
-		Kernel.WriteMemory<int>(Game::GetLocalPlayer() + OFF_HEALTH, 100);
-		
-
+		Global->PID = Kernel.GetProcessPID("csgo.exe");
 		Sleep(500);
 	}
+
+	Log("PID", Global->PID);
+	Kernel.SetupPid(Global->PID); //setupped pid!
+	Log("\n", NULL);
+
+
+	WaitModule(Global->Client, "client.dll");
+	WaitModule(Global->Engine, "engine.dll");
+
+
+	//Global->K = &Kernel; //Setup driver object
+	Log("[+] Sucessfully settupped Kernel object!\n\n", NULL);
+
+	//ofs->getOffsets();
+
+
+	//Log("Game Base", (PVOID)Game::Base);
+	//Log("LocalPlayer", (PVOID)Game::GetLocalPlayer());
+	//Log("Health", (PVOID)(Game::GetLocalPlayer() + OFF_HEALTH));
+
+	//auto OldHealth = Game::GetHealth();
+
+	//while (true)
+	//{
+	//	//uint32_t CurHealth = Game::GetHealth();
+
+
+	//	Kernel.WriteMemory<int>(Game::GetHealth(true), 999);
+
+
+	//	Sleep(500);
+	//}
 
 	//std::cout << "PID: " << PID << "\n";
 

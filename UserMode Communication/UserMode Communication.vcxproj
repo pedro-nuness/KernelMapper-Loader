@@ -37,7 +37,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -130,14 +130,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DriverCommunication.cpp" />
+    <ClCompile Include="game\entity.cpp" />
+    <ClCompile Include="game\netvars.cpp" />
+    <ClCompile Include="game\offsets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DriverCommunication.h" />
-    <ClInclude Include="game\game.h" />
+    <ClInclude Include="game\entity.h" />
+    <ClInclude Include="game\enums.h" />
+    <ClInclude Include="game\netvars.h" />
+    <ClInclude Include="Utils\globals.h" />
+    <ClInclude Include="game\offsets.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Utils\math.h" />
+    <ClInclude Include="Utils\memory.h" />
     <ClInclude Include="Utils\Singleton.h" />
+    <ClInclude Include="Utils\typedefs.h" />
     <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

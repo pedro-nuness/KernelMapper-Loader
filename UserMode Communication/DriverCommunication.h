@@ -1,15 +1,7 @@
 #pragma once
 //#include "Kernel-User.h"
-#include <cstdint>
-#include <memory>
-#include <string_view>
-#include <windows.h>
-#include <TlHelp32.h>
-#include <mutex>
-#include <iostream>
-#include <vector>
-#include <cassert>
 #include "..\Kernel-User.h"
+#include <mutex>
 
 class DriverCommunication
 {
@@ -121,6 +113,35 @@ public:
 			*answer = DefaultAnswer;
 
 		return uBuffer;
+	}
+
+	
+	bool Read(ULONG64 uAddress, LPVOID Buffer, SIZE_T size, HANDLE uPid = 0, AnswareManager* answer = nullptr)
+	{
+		if (!uPid && this->uSetupped) {
+			uPid = this->dPid;
+		}
+		else
+			return NULL;
+
+		AnswareManager DefaultAnswer = AnswareManager(true);
+
+		_COPY_MEMORY m{ };
+		m.kFunction = READ;
+		m.kPid = uPid;
+		m.kAddress = uAddress;
+		m.kBuffer = &Buffer;
+		m.kSize = size;
+		m.kModuleName = NULL;
+		m.KProcessName = NULL;
+		m.kAnswer = &DefaultAnswer;
+
+		CallHook(&m);
+
+		if (answer != nullptr)
+			*answer = DefaultAnswer;
+
+		return DefaultAnswer.GetStatus();
 	}
 
 	void* GetModuleBasePointer(const char* uModuleName, HANDLE uPid = 0 , AnswareManager* answer = nullptr)
