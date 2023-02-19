@@ -14,7 +14,7 @@ enum FUNCTIONS
 
 class AnswareManager
 {
-
+	
 	void SetupText(char* MyChar, char* text)
 	{
 		*MyChar = *text;

@@ -24,7 +24,7 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 		return false;
 	}
 
-	
+
 	pOldNtHeader = reinterpret_cast<IMAGE_NT_HEADERS*>(pSrcData + reinterpret_cast<IMAGE_DOS_HEADER*>(pSrcData)->e_lfanew);
 	pOldOptHeader = &pOldNtHeader->OptionalHeader;
 	pOldFileHeader = &pOldNtHeader->FileHeader;
@@ -34,7 +34,7 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 		return false;
 	}
 
-//	ILog("File ok\n");
+	//	ILog("File ok\n");
 
 	pTargetBase = reinterpret_cast<BYTE*>(VirtualAllocEx(hProc, nullptr, pOldOptHeader->SizeOfImage, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
 	if (!pTargetBase) {
@@ -109,11 +109,11 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 	}
 
 
-//	ILog("Mapped DLL at %p\n", pTargetBase);
-	//ILog("Mapping info at %p\n", MappingDataAlloc);
-	//ILog("Shell code at %p\n", pShellcode);
+	//	ILog("Mapped DLL at %p\n", pTargetBase);
+		//ILog("Mapping info at %p\n", MappingDataAlloc);
+		//ILog("Shell code at %p\n", pShellcode);
 
-//	ILog("Data allocated\n");
+	//	ILog("Data allocated\n");
 
 #ifdef _DEBUG
 	ILog("My shellcode pointer %p\n", Shellcode);
@@ -167,7 +167,7 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 	}
 	memset(emptyBuffer, 0, 1024 * 1024 * 20);
 
-	
+
 
 	//CLEAR PE HEAD
 	if (ClearHeader) {
@@ -219,7 +219,7 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 		VirtualProtectEx(hProc, pTargetBase, IMAGE_FIRST_SECTION(pOldNtHeader)->VirtualAddress, PAGE_READONLY, &old);
 	}
 
-	
+
 
 	if (!WriteProcessMemory(hProc, pShellcode, emptyBuffer, 0x1000, nullptr)) {
 		ILog("WARNING: Can't clear shellcode\n");
@@ -231,7 +231,7 @@ bool ManualMapDll(HANDLE hProc, BYTE* pSrcData, SIZE_T FileSize, bool ClearHeade
 		ILog("WARNING: can't release mapping data memory\n");
 	}
 
-	
+
 	return true;
 }
 
@@ -371,21 +371,21 @@ int Inject(std::string DllPath, DWORD PID)
 	if (!hProc) {
 		DWORD Err = GetLastError();
 		std::cout << ("OpenProcess failed: 0x%X\n", Err);
-		system("PAUSE");
+		//system("PAUSE");
 		return -2;
 	}
 
 	if (!IsCorrectTargetArchitecture(hProc)) {
 		std::cout << ("Invalid Process Architecture.\n");
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return -3;
 	}
 
 	if (GetFileAttributes(DllPath.c_str()) == INVALID_FILE_ATTRIBUTES) {
 		std::cout << ("Dll file doesn't exist\n");
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return -4;
 	}
 
@@ -395,7 +395,7 @@ int Inject(std::string DllPath, DWORD PID)
 		std::cout << ("Opening the file failed: %X\n", (DWORD)File.rdstate());
 		File.close();
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return -5;
 	}
 
@@ -404,7 +404,7 @@ int Inject(std::string DllPath, DWORD PID)
 		std::cout << "Filesize invalid.\n";
 		File.close();
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return -6;
 	}
 
@@ -413,7 +413,7 @@ int Inject(std::string DllPath, DWORD PID)
 		std::cout << ("Can't allocate dll file.\n");
 		File.close();
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return -7;
 	}
 
@@ -428,7 +428,7 @@ int Inject(std::string DllPath, DWORD PID)
 		delete[] pSrcData;
 		CloseHandle(hProc);
 		std::cout << "Error while mapping.\n";
-		system("PAUSE");
+		//system("PAUSE");
 		return -8;
 	}
 	delete[] pSrcData;
@@ -456,18 +456,18 @@ bool InjectBytes(std::vector<std::uint8_t> bytes, DWORD PID)
 	if (!hProc) {
 		DWORD Err = GetLastError();
 		std::cout << ("OpenProcess failed: 0x%X\n", Err);
-		system("PAUSE");
+		//system("PAUSE");
 		return false;
 	}
 
 	if (!IsCorrectTargetArchitecture(hProc)) {
 		std::cout << ("Invalid Process Architecture.\n");
 		CloseHandle(hProc);
-		system("PAUSE");
+		//system("PAUSE");
 		return false;
 	}
 	//file.write((char*)bytes.data(), bytes.size());
-	
+
 	BYTE* pSrcData = new BYTE;
 
 	pSrcData = bytes.data();
@@ -479,12 +479,12 @@ bool InjectBytes(std::vector<std::uint8_t> bytes, DWORD PID)
 	}
 
 	//std::cout << "Mapping...\n";
-	if (!ManualMapDll(hProc, pSrcData, sizeof(*pSrcData))) 
+	if (!ManualMapDll(hProc, pSrcData, sizeof(*pSrcData)))
 	{
 		delete pSrcData;
 		CloseHandle(hProc);
 		std::cout << "Error while mapping.\n";
-		system("PAUSE");
+		//system("PAUSE");
 		return false;
 	}
 

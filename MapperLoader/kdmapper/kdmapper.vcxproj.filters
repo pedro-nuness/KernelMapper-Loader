@@ -101,6 +101,9 @@
     <ClInclude Include="..\injector.h" />
     <ClInclude Include="TempFiles.h" />
     <ClInclude Include="..\sha1.h" />
+    <ClInclude Include="logo.h">
+      <Filter>Menu\logo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Mapping">
@@ -112,5 +115,14 @@
     <Filter Include="Menu">
       <UniqueIdentifier>{ed5b9081-f6b5-4470-95b9-b7b3925b38d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Menu\logo">
+      <UniqueIdentifier>{319c45b0-afe3-4b4d-9263-23bf7e60b555}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Logo.ico" />
   </ItemGroup>
 </Project>

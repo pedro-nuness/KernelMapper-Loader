@@ -2,8 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sha1.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Loader\crypt_str.h" />
+    <ClInclude Include="sha1.h" />
+    <ClInclude Include="crypt_str.h" />
   </ItemGroup>
 </Project>

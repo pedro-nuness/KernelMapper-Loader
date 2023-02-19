@@ -5,10 +5,13 @@
 #include "../ImGui/imgui_impl_win32.h"
 
 #include <d3d9.h>
+#include <d3dx9tex.h>
 #include <tchar.h>
 #include <iostream>
 
 #include <thread>
+#include "..\kdmapper\logo.h"
+
 
 
 bool bDestroy = false;
@@ -24,6 +27,8 @@ void CleanupDeviceD3D();
 void ResetDevice();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+ LPDIRECT3DTEXTURE9 logo = nullptr;
+
 // Main code
 int main(int, char**)
 {
@@ -33,7 +38,7 @@ int main(int, char**)
 	HWND hwnd = ::CreateWindow(wc.lpszClassName, _T("Loader"), WS_OVERLAPPEDWINDOW, 0, 0, 50, 50, NULL, NULL, wc.hInstance, NULL);
 
     // Hide console window
-    ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+    ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
 
 	// Init Direct3d
 	if (!CreateDeviceD3D(hwnd))
@@ -65,7 +70,12 @@ int main(int, char**)
     ImGui_ImplDX9_Init(g_pd3dDevice);
 
     ImFont* mdFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Verdana.ttf", 12.f);
-  
+    
+
+    if ( logo == nullptr )
+        D3DXCreateTextureFromFileInMemoryEx( g_pd3dDevice , &Logo , sizeof( Logo ) , 500 , 550 , D3DX_DEFAULT , D3DUSAGE_DYNAMIC , D3DFMT_UNKNOWN , D3DPOOL_DEFAULT , D3DX_DEFAULT , D3DX_DEFAULT , 0 , NULL , NULL , &logo );
+
+
 
     while (!bDestroy)
     {
@@ -83,11 +93,15 @@ int main(int, char**)
         // Start the Dear ImGui frame
         ImGui_ImplDX9_NewFrame();
         ImGui_ImplWin32_NewFrame();
+       // ImGui::PushStyleColor( ImGuiCol_FrameBg , ImVec4( 0.8 , 0.8 , 0.8 , 255 ) );
+       // ImGui::PushStyleColor( ImGuiCol_WindowBg , ImVec4( 0.8 , 0.8 , 0.8 , 255 ) );
+       // ImGui::PushStyleColor( ImGuiCol_Text , ImVec4( 0.2 , 0.2 , 0.2 , 255 ) );
         ImGui::NewFrame();
         {
             menu::render();
         }
         ImGui::EndFrame();
+       // ImGui::PopStyleColor( 3);
         g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
         g_pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);

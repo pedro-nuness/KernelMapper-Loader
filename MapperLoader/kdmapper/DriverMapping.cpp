@@ -78,10 +78,14 @@ bool MapDriver(std::string DriverPath, bool MdlMode = false, bool Free = false, 
 		return false;
 	}
 
+	Log( L"[+] 0" << std::endl );
+
 	iqvw64e_device_handle = intel_driver::Load();
 
 	if (iqvw64e_device_handle == INVALID_HANDLE_VALUE)
 		return false;
+
+	Log( L"[+] 1" << std::endl );
 
 	std::vector<uint8_t> raw_image = { 0 };
 	if (!utils::ReadFileToMemory(StringToWstring(DriverPath), &raw_image)) {
@@ -90,6 +94,8 @@ bool MapDriver(std::string DriverPath, bool MdlMode = false, bool Free = false, 
 		return false;
 	}
 
+	Log( L"[+] 2" << std::endl );
+
 	NTSTATUS exitCode = 0;
 	if (!kdmapper::MapDriver(iqvw64e_device_handle, raw_image.data(), 0, 0, Free, true, MdlMode, PassAlocationPtr, callbackExample, &exitCode)) {
 		Log(L"[-] Failed to map " << StringToWstring(DriverPath) << std::endl);
@@ -97,9 +103,14 @@ bool MapDriver(std::string DriverPath, bool MdlMode = false, bool Free = false, 
 		return false;
 	}
 
+	Log( L"[+] 3" << std::endl );
+
 	if (!intel_driver::Unload(iqvw64e_device_handle)) {
 		Log(L"[-] Warning failed to fully unload vulnerable driver " << std::endl);
 	}
+
+	Log( L"[+] 4" << std::endl );
+
 	Log(L"[+] success" << std::endl);
 
 	return true;
