@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="DriverMap\intel_driver.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="DriverMap\kUtils.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="DriverMap\portable_executable.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="DriverMap\service.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_demo.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_draw.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_impl_dx9.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_impl_win32.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_tables.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ImGui\imgui_widgets.cpp">
+      <Filter>GUI\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Menu\Menu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Launch\Launch.cpp">
+      <Filter>Launch</Filter>
+    </ClCompile>
+    <ClCompile Include="Driver\driver.cpp">
+      <Filter>Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Utils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals\globals.cpp">
+      <Filter>Globals</Filter>
+    </ClCompile>
+    <ClCompile Include="DriverMap\KdMain.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="DriverMap\kdmapper.cpp">
+      <Filter>DriverMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\SHA\sha1.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\Injection\injector.cpp">
+      <Filter>Injection</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\memory.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DriverMap\intel_driver.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\intel_driver_resource.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\kUtils.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\portable_executable.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\service.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imconfig.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imgui.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imgui_impl_dx9.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imgui_impl_win32.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imgui_internal.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imstb_rectpack.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imstb_textedit.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ImGui\imstb_truetype.h">
+      <Filter>GUI\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Menu\Menu.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Launch\Launch.h">
+      <Filter>Launch</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Bytes\logo.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Driver\communication.h">
+      <Filter>Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="Driver\driver.h">
+      <Filter>Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\crypt_str.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\singleton.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals\globals.h">
+      <Filter>Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\kdmapper.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\SHA\sha1.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Injection\injector.h">
+      <Filter>Injection</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverMap\nt.hpp">
+      <Filter>DriverMap</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFiles\Temp.h">
+      <Filter>TempFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\memory.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Injection\Injection.h">
+      <Filter>Injection</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DriverMap">
+      <UniqueIdentifier>{2ba08335-0909-48ff-b76d-f73d5b044edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{16caeb4a-f938-4e6a-86d5-36351aaac6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\ImGui">
+      <UniqueIdentifier>{f104f574-eec0-4774-b236-0b0bb86945a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Launch">
+      <UniqueIdentifier>{28ab7224-ddf9-4836-b4e0-73285dc30e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{8cbf3b71-d2ee-4e24-a31d-ea7ad1a3c802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver">
+      <UniqueIdentifier>{c16e0374-b59c-452d-92da-ada21f0d2422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{2507f6c3-3c85-4115-bc8f-b5885d86aa2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Globals">
+      <UniqueIdentifier>{f41da989-e28b-425e-a2f5-f94e679c9227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Injection">
+      <UniqueIdentifier>{f9f5c738-ee21-4463-b1c1-519490f2fb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TempFiles">
+      <UniqueIdentifier>{b9b84f72-45c7-4faf-849f-07d363057fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{cbf0cc2d-b3d4-4c6a-81f3-b340f0534c41}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Logo.ico">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\Loader.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

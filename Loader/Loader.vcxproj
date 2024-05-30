@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{518E0636-BA8F-459D-ACAC-81BD33475E3E}</ProjectGuid>
+    <RootNamespace>Loader</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>Temp\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)Dependencies\include\Auth\lib;D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x64\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <AdditionalDependencies>version.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\Include;D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>version.lib;libcurl.lib;library_x64.lib;d3d9.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="DriverMap\intel_driver.cpp" />
+    <ClCompile Include="DriverMap\KdMain.cpp" />
+    <ClCompile Include="DriverMap\kdmapper.cpp" />
+    <ClCompile Include="DriverMap\portable_executable.cpp" />
+    <ClCompile Include="DriverMap\service.cpp" />
+    <ClCompile Include="DriverMap\kUtils.cpp" />
+    <ClCompile Include="Driver\driver.cpp" />
+    <ClCompile Include="Globals\globals.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="GUI\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="GUI\Menu\Menu.cpp" />
+    <ClCompile Include="Launch\Launch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Memory\Injection\injector.cpp" />
+    <ClCompile Include="Memory\memory.cpp" />
+    <ClCompile Include="Utils\SHA\sha1.cpp" />
+    <ClCompile Include="Utils\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DriverMap\intel_driver.hpp" />
+    <ClInclude Include="DriverMap\intel_driver_resource.hpp" />
+    <ClInclude Include="DriverMap\kdmapper.hpp" />
+    <ClInclude Include="DriverMap\nt.hpp" />
+    <ClInclude Include="DriverMap\portable_executable.hpp" />
+    <ClInclude Include="DriverMap\service.hpp" />
+    <ClInclude Include="DriverMap\kUtils.hpp" />
+    <ClInclude Include="Driver\communication.h" />
+    <ClInclude Include="Driver\driver.h" />
+    <ClInclude Include="Globals\globals.h" />
+    <ClInclude Include="GUI\Bytes\logo.h" />
+    <ClInclude Include="GUI\ImGui\imconfig.h" />
+    <ClInclude Include="GUI\ImGui\imgui.h" />
+    <ClInclude Include="GUI\ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="GUI\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="GUI\ImGui\imgui_internal.h" />
+    <ClInclude Include="GUI\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="GUI\ImGui\imstb_textedit.h" />
+    <ClInclude Include="GUI\ImGui\imstb_truetype.h" />
+    <ClInclude Include="GUI\Menu\Menu.h" />
+    <ClInclude Include="Launch\Launch.h" />
+    <ClInclude Include="Memory\Injection\Injection.h" />
+    <ClInclude Include="Memory\Injection\injector.h" />
+    <ClInclude Include="Memory\memory.h" />
+    <ClInclude Include="Resources\resource.h" />
+    <ClInclude Include="TempFiles\Temp.h" />
+    <ClInclude Include="Utils\crypt_str.h" />
+    <ClInclude Include="Utils\SHA\sha1.h" />
+    <ClInclude Include="Utils\singleton.h" />
+    <ClInclude Include="Utils\Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\Loader.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Logo.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

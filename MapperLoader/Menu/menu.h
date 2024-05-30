@@ -1,4 +1,0 @@
-namespace menu {
-	void render();
-}
-

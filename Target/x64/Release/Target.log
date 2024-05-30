@@ -1,0 +1,11 @@
+﻿  main.cpp
+  Gerando código
+  0 of 1668 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finalizada a geração de código
+library_x64.lib(auth.obj) : warning LNK4099: PDB '' não foi encontrado 'library_x64.lib(auth.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+library_x64.lib(utils.obj) : warning LNK4099: PDB '' não foi encontrado 'library_x64.lib(utils.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+library_x64.lib(hmac_sha256.obj) : warning LNK4099: PDB '' não foi encontrado 'library_x64.lib(hmac_sha256.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+library_x64.lib(sha256.obj) : warning LNK4099: PDB '' não foi encontrado 'library_x64.lib(sha256.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+  Target.vcxproj -> D:\Code\Projects\Software\_Loader\x64\Release\Target.exe
